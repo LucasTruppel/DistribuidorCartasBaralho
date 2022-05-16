@@ -20,3 +20,6 @@ partida.baralho.embaralhar()
 partida.distribuir_cartas()
 partida.mostrar_maos_jogadores()
 partida.baralho.mostrar_baralho()
+
+print('Digite algo para fechar:')
+input()
