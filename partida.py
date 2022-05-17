@@ -13,27 +13,55 @@ class Partida:
             self.quant_jogadores += 1
             self.jogadores.append(Pessoa(self.quant_jogadores))
 
-    '''
-    def distribuir_cartas(self):
-        ultimo_jogador = 0
-        while self.baralho.quant_cartas > 0:
-            carta = self.baralho.cartas[0]
-            if ultimo_jogador >= self.quant_jogadores:
-                ultimo_jogador = 0
-            jogador = self.jogadores[ultimo_jogador]
-            jogador.mao.append(carta)
-            self.baralho.cartas.remove(carta)
-            self.baralho.quant_cartas -= 1
-            ultimo_jogador += 1
-    '''
+    def selecionar_quantidade_jogadores(self):
+        pronto = False
+        while not pronto:
+            print('Quantas pessoas vão jogar?')
+            quantidade_pessoas = input()
+            if quantidade_pessoas.isnumeric() and quantidade_pessoas != '0':
+                quantidade_pessoas = int(quantidade_pessoas)
+                self.adicionar_jogadores(quantidade_pessoas)
+                pronto = True
+            else:
+                print('Número inválido. Tente Novamente.\n')
+        print()
 
-    def distribuir_cartas(self):
+    def comprar_carta(self, jogador):
+        carta = self.baralho.cartas[0]
+        jogador.mao.append(carta)
+        self.baralho.cartas.remove(carta)
+        self.baralho.quant_cartas -= 1
+
+    def distribuir_todas_cartas(self):
+        baralho_vazio = False
+        while not baralho_vazio:
+            for jogador in self.jogadores:
+                if self.baralho.quant_cartas <= 0:
+                    baralho_vazio = True
+                    break
+                self.comprar_carta(jogador)
+
+    def distribuir_cartas_igualmente(self):
         while self.baralho.quant_cartas > 0 and self.baralho.quant_cartas >= self.quant_jogadores:
             for jogador in self.jogadores:
-                carta = self.baralho.cartas[0]
-                jogador.mao.append(carta)
-                self.baralho.cartas.remove(carta)
-                self.baralho.quant_cartas -= 1
+                self.comprar_carta(jogador)
+
+    def selecionar_tipo_distribuicao(self):
+        pronto = False
+        while not pronto:
+            print('Deseja distribuir todas cartas ou distribuí-las igualmente entre os jogadores?\n'
+                  'Digite: 1 para todas cartas\n'
+                  '        2 para igualmente')
+            comando = input()
+            if comando == '1':
+                self.distribuir_todas_cartas()
+                pronto = True
+            elif comando == '2':
+                self.distribuir_cartas_igualmente()
+                pronto = True
+            else:
+                print('Número inválido. Tente Novamente.\n')
+        print()
 
     def mostrar_maos_jogadores(self):
         for pessoa in self.jogadores:
@@ -41,3 +69,10 @@ class Partida:
             for carta in pessoa.mao:
                 print(carta.numero, carta.naipe)
             print()
+
+    def jogar(self):
+        self.selecionar_quantidade_jogadores()
+        self.baralho.embaralhar()
+        self.selecionar_tipo_distribuicao()
+        self.mostrar_maos_jogadores()
+        self.baralho.mostrar_baralho()
